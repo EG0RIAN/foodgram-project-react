@@ -22,7 +22,7 @@ router_v1.register(
     basename='subscriptions_list'
 )
 router_v1.register(
-    r'users/(?P<id>\d+)/subscribe',         
+    r'users/(?P<id>\d+)/subscribe',
     SubscribeViewSet,
     basename='subscribe'
 )
