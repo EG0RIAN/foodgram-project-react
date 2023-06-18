@@ -4,8 +4,6 @@ from django.db import models
 
 
 class UserModel(AbstractUser):
-    """Класс кастомных пользователей."""
-
     username = models.CharField(
         max_length=150,
         verbose_name='Никнейм',

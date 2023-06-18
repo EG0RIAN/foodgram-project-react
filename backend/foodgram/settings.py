@@ -9,7 +9,7 @@ PROJECT_BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 load_dotenv(f'{PROJECT_BASE_DIR}/infra/.env')
 
-SECRET_KEY = 'django-insecure-ptrp@mf%+4^!yu=sgfrrv%du&fb54c0&v8qe1nh9racd_#+kte'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = False
 

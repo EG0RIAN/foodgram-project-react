@@ -12,8 +12,8 @@ from rest_framework.permissions import (AllowAny, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
-from recipes.models import (Favorite, IngredientsModel, RecipeIngredient,
-                            RecipesModel, ShoppingCart, TagsModel)
+from recipes.models import (Favorite, Ingredient, RecipeIngredient,
+                            Recipe, ShoppingCart, Tag)
 from users.models import Follow
 
 from .filters import IngredientFilter, RecipeFilter
@@ -62,9 +62,6 @@ class UserViewSet(viewsets.ModelViewSet):
         permission_classes=(permissions.IsAuthenticated,)
     )
     def me(self, request):
-        """Возможность получения Пользователя данных о себе
-
-        GET запрос"""
         serializer = self.get_serializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -110,7 +107,6 @@ class SubscribeViewSet(
 class UserLoginViewSet(
     viewsets.GenericViewSet, mixins.CreateModelMixin,
 ):
-    """Вьюсет логина"""
     permission_classes = (AllowAny,)
 
     serializer_class = UserLoginSerializer
@@ -171,7 +167,7 @@ class TagsViewSet(
     serializer_class = TagSerializer
     pagination_class = None
 
-    queryset = TagsModel.objects.all()
+    queryset = Tag.objects.all()
 
 
 class IngredientsViewSet(
@@ -185,7 +181,7 @@ class IngredientsViewSet(
     filterset_class = IngredientFilter
     pagination_class = None
 
-    queryset = IngredientsModel.objects.all()
+    queryset = Ingredient.objects.all()
 
 
 class RecipesViewSet(
@@ -196,7 +192,7 @@ class RecipesViewSet(
     filterset_class = RecipeFilter
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    queryset = RecipesModel.objects.all()
+    queryset = Recipe.objects.all()
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -212,16 +208,16 @@ class RecipesViewSet(
     def get_queryset(self):
         is_favorited = self.request.query_params.get('is_favorited') or 0
         if int(is_favorited) == 1:
-            return RecipesModel.objects.filter(
+            return Recipe.objects.filter(
                 favorites__user=self.request.user
             )
         is_in_shopping_cart = self.request.query_params.get(
             'is_in_shopping_cart') or 0
         if int(is_in_shopping_cart) == 1:
-            return RecipesModel.objects.filter(
+            return Recipe.objects.filter(
                 cart__user=self.request.user
             )
-        return RecipesModel.objects.all()
+        return Recipe.objects.all()
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
