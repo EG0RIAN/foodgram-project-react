@@ -11,7 +11,7 @@ load_dotenv(f'{PROJECT_BASE_DIR}/infra/.env')
 
 SECRET_KEY = 'django-insecure-ptrp@mf%+4^!yu=sgfrrv%du&fb54c0&v8qe1nh9racd_#+kte'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
