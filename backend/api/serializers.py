@@ -33,6 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
             password = make_password(data['password'])
             data['password'] = password
             return data
+        return data
 
 
 class UserLoginSerializer(serializers.Serializer):
@@ -149,9 +150,11 @@ class RecipeGetSerializer(serializers.ModelSerializer):
         return obj.cart.filter(user=user).exists()
 
     def get_ingredients(self, obj):
-        ingredients = obj.ingredients.all()
-        serializer = Ingredient(ingredients, many=True)
-        return serializer.data
+        recipe_ingredients = RecipeIngredient.objects.filter(recipe=obj)
+        ingredient_serializer = IngredientRecipeGetSerializer(
+            instance=recipe_ingredients, many=True
+        )
+        return ingredient_serializer.data
 
 
 class IngredientRecipeGetSerializer(serializers.ModelSerializer):
