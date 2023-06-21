@@ -199,16 +199,9 @@ class RecipesSerializer(serializers.ModelSerializer):
         return data
 
     def to_representation(self, instance):
-        self.fields.pop('ingredients')
-        self.fields.pop('tags')
-        representation = super().to_representation(instance)
-        representation['ingredients'] = IngredientRecipeGetSerializer(
-            RecipeIngredient.objects.filter(recipe=instance), many=True
-        ).data
-        representation['tags'] = TagSerializer(
-            instance.tags, many=True
-        ).data
-        return representation
+        return RecipesSerializer(instance, context={
+            'request': self.context.get('request')
+        }).data
 
     def create(self, validated_data):
         tags_data = validated_data.pop('tags', [])
