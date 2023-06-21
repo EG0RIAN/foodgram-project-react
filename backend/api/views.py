@@ -15,7 +15,6 @@ from rest_framework.response import Response
 from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
 from users.models import Follow
-
 from .filters import IngredientFilter, RecipeFilter
 from .paginators import PageLimitPagination
 from .serializers import (ChangePasswordSerializer, FollowSerializer,

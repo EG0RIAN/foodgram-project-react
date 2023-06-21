@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
 
 from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
 from users.models import Follow
@@ -63,9 +62,14 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class IngredientsSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source='ingredient.id')
+    name = serializers.ReadOnlyField(source='ingredient.name')
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredient.measurement_unit')
+
     class Meta:
-        model = Ingredient
-        fields = ('id', 'name', 'measurement_unit')
+        model = RecipeIngredient
+        fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
 class RecipeFollowSerializer(serializers.ModelSerializer):
@@ -151,28 +155,9 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 
     def get_ingredients(self, obj):
         recipe_ingredients = RecipeIngredient.objects.filter(recipe=obj)
-        ingredient_serializer = IngredientRecipeGetSerializer(
-            instance=recipe_ingredients, many=True
-        )
+        ingredient_serializer = IngredientsSerializer(
+            instance=recipe_ingredients, many=True)
         return ingredient_serializer.data
-
-
-class IngredientRecipeGetSerializer(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField(source='ingredient.id')
-    name = serializers.ReadOnlyField(source='ingredient.name')
-    measurement_unit = serializers.ReadOnlyField(
-        source='ingredient.measurement_unit'
-    )
-
-    class Meta:
-        model = RecipeIngredient
-        fields = ('id', 'name', 'measurement_unit', 'amount')
-        validators = (
-            UniqueTogetherValidator(
-                queryset=RecipeIngredient.objects.all(),
-                fields=('ingredient', 'recipe')
-            )
-        )
 
 
 class IngredientRecipeSerializer(serializers.ModelSerializer):
