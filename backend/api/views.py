@@ -4,6 +4,8 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                            ShoppingCart, Tag)
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
@@ -11,9 +13,6 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import (AllowAny, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
-
-from recipes.models import (Favorite, IngredientsModel, RecipeIngredient,
-                            RecipesModel, ShoppingCart, TagsModel)
 from users.models import Follow
 
 from .filters import IngredientFilter, RecipeFilter
@@ -171,7 +170,7 @@ class TagsViewSet(
     serializer_class = TagSerializer
     pagination_class = None
 
-    queryset = TagsModel.objects.all()
+    queryset = Tag.objects.all()
 
 
 class IngredientsViewSet(
@@ -185,7 +184,7 @@ class IngredientsViewSet(
     filterset_class = IngredientFilter
     pagination_class = None
 
-    queryset = IngredientsModel.objects.all()
+    queryset = Ingredient.objects.all()
 
 
 class RecipesViewSet(
@@ -196,7 +195,7 @@ class RecipesViewSet(
     filterset_class = RecipeFilter
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    queryset = RecipesModel.objects.all()
+    queryset = Recipe.objects.all()
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -212,16 +211,16 @@ class RecipesViewSet(
     def get_queryset(self):
         is_favorited = self.request.query_params.get('is_favorited') or 0
         if int(is_favorited) == 1:
-            return RecipesModel.objects.filter(
+            return Recipe.objects.filter(
                 favorites__user=self.request.user
             )
         is_in_shopping_cart = self.request.query_params.get(
             'is_in_shopping_cart') or 0
         if int(is_in_shopping_cart) == 1:
-            return RecipesModel.objects.filter(
+            return Recipe.objects.filter(
                 cart__user=self.request.user
             )
-        return RecipesModel.objects.all()
+        return Recipe.objects.all()
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

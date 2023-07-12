@@ -39,7 +39,7 @@ def insert_into_base_ingredients():
                         title = line.get('name')
                         measurement_unit = line.get('measurement_unit')
                         cursor.execute(
-                            f"INSERT INTO recipes_ingredientsmodel("
+                            f"INSERT INTO recipes_ingredient("
                             f"name, measurement_unit"
                             f") VALUES ('{title}', '{measurement_unit}');")
                         conn.commit()

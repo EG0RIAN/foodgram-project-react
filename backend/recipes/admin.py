@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from .models import (Favorite, IngredientsModel, RecipeIngredient,
-                     RecipesModel, ShoppingCart, TagsModel)
+from .models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                     ShoppingCart, Tag)
 
 
-@admin.register(IngredientsModel)
+@admin.register(Ingredient)
 class IngredientsAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -15,7 +15,7 @@ class IngredientsAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(TagsModel)
+@admin.register(Tag)
 class TagsAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -27,7 +27,7 @@ class TagsAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(RecipesModel)
+@admin.register(Recipe)
 class RecipesAdmin(admin.ModelAdmin):
     list_display = (
         'author',
