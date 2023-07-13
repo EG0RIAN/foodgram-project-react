@@ -230,15 +230,13 @@ class RecipesSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        if 'tags' in self.validated_data:
+        if 'tags' in validated_data:
             tags_data = validated_data.pop('tags')
             instance.tags.set(tags_data)
-        if 'ingredients' in self.validated_data:
+        if 'ingredients' in validated_data:
             ingredients_data = validated_data.pop('ingredients')
             with transaction.atomic():
-                amount_set = RecipeIngredient.objects.filter(
-                    recipe__id=instance.id)
-                amount_set.delete()
+                RecipeIngredient.objects.filter(recipe=instance).delete()
                 self._create_or_update_ingredients(instance, ingredients_data)
         return super().update(instance, validated_data)
 
