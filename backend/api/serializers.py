@@ -200,9 +200,9 @@ class RecipesSerializer(serializers.ModelSerializer):
     def validate(self, data):
         ingredients = data.get('ingredients')
         ingredients_list = [
-                ingredient.get('ingredient')
-                for ingredient in ingredients
-            ]
+            ingredient.get('ingredient')
+            for ingredient in ingredients
+        ]
         if len(ingredients_list) != len(set(ingredients_list)):
             raise serializers.ValidationError(
                 'Проверьте, какой-то ингредиент был выбран более 1 раза'
